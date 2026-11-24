@@ -24,8 +24,9 @@
       create policy "anyone can read" on guestbook for select using (true);
       create policy "anyone can sign" on guestbook for insert with check (true);
 
-   3. Project Settings → API: copy the Project URL and the "anon public" key
-      into SUPABASE_URL and SUPABASE_ANON_KEY below. (The anon key is meant
+   3. Project Settings → API Keys: copy the Project URL and the PUBLISHABLE key
+      (starts with sb_publishable_) into SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY
+      below. (The publishable key is meant
       to be public; the policies above only allow reading and adding.)
    3b. AVATARS — run this once in the SQL Editor (needed even if step 2 is done):
 
@@ -248,17 +249,17 @@
 <script>
   // ===== fill these in (see setup comment at top) =====
   var SUPABASE_URL = "https://etwpmduftccartwocaal.supabase.co";      // e.g. "https://abcdxyz.supabase.co"
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0d3BtZHVmdGNjYXJ0d29jYWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4MDE1MDIsImV4cCI6MjEwODM3NzUwMn0.scwSq9WL9EfUJINN-Uu-nVTcKrFMdjfhNmyUY1ebKr4"; // the "anon public" key
+  var SUPABASE_PUBLISHABLE_KEY = "sb_publishable__7cRFC5ptQJk-odeLWPyjA_XyPEj7jo";  // paste your sb_publishable_... key here
   // ====================================================
 
   var PAGE = 20, offset = 0;
-  var live = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  var live = !!(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
   var $ = function(id){ return document.getElementById(id); };
   var listEl = $('entries'), statusEl = $('status'), moreBtn = $('more');
   if (!live) $('demo').hidden = false;
 
   function headers(){
-    return { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' };
+    return { 'apikey': SUPABASE_PUBLISHABLE_KEY, 'Content-Type': 'application/json' }; // publishable keys go on apikey only, never Authorization
   }
   function local(){ try { return JSON.parse(localStorage.getItem('gb_demo') || '[]'); } catch(e){ return []; } }
 
@@ -325,7 +326,7 @@
       if (!live) return { path: null, localUrl: URL.createObjectURL(p.blob) };
       return fetch(SUPABASE_URL + '/storage/v1/object/avatars/' + path, {
         method: 'POST',
-        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        headers: { 'apikey': SUPABASE_PUBLISHABLE_KEY,
                    'Content-Type': p.blob.type || 'image/' + p.ext, 'x-upsert': 'false' },
         body: p.blob
       }).then(function(r){
